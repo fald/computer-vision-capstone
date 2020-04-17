@@ -27,6 +27,22 @@ def get_circles(img):
     return circles
 
 
+def get_septagons(img):
+    ret, thresh = cv2.threshold(img, 110, 255, cv2.THRESH_BINARY) 
+    contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    for cnt in contours:
+        area = cv2.contourArea(cnt)
+        approx = cv2.approxPolyDP(cnt, 0.026 * cv2.arcLength(cnt, True), True)
+        if len(approx) >= 7:
+            cv2.drawContours(img, [approx], 0, (0, 0, 255), 5) 
+   
+    # Showing the image along with outlined arrow. 
+    cv2.imshow('image2', img)  
+    cv2.waitKey(0)
+    pass
+
+
 def get_radii(circles):
     return [circle[2] for circle in circles[0]]
 
@@ -80,14 +96,16 @@ def draw_circles(circles, orig_img, values):
 if __name__ == "__main__":
 
     img, orig_img = get_img("capstone_coins.png")
-    circles = get_circles(img)
+    # circles = get_circles(img)
 
-    values = est_values(img, circles)
+    # values = est_values(img, circles)
 
-    draw_circles(circles, orig_img, values)
+    # draw_circles(circles, orig_img, values)
 
-    cv2.imshow("Detected Coins", orig_img)
+    # cv2.imshow("Detected Coins", orig_img)
     # cv2.imshow("Detected Coins", img)
+
+    get_septagons(img)
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
